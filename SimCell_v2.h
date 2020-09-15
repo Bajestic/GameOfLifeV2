@@ -9,10 +9,8 @@ public:
     SimCell();
     bool CellState() const;
     const SimCell * GetCellAddress() const;
-
-    // Set & get information functions about neighbors
     bool SetNumberOfNeighbors(unsigned int);
-    void ResetNumberOfNeigbors(); // to zero
+    void ResetNumberOfNeigbors(); // to zero - zero-vector too
     bool IsAllNeighborsHasAddresses();
     int NumberOfFreeNeighborsHost();
     bool DeleteAddress(SimCell *);
@@ -20,7 +18,6 @@ public:
     void ShowLabel() const;
     void SetLabel(const char *);
     void SetLabel(std::string);
-
     int GetNumberOfNeighbors();
     bool SetNeigborAddress(SimCell *);
     void SetState(bool);
@@ -35,8 +32,6 @@ private:
     SimCell * cellAddress;
     std::vector<SimCell *> neighborsAddressesList;
     std::string label;
-
-    // private functions
     void AddOneFreeAddressMore();
 };
 

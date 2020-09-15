@@ -3,8 +3,6 @@
 #include <iostream>
 #include <algorithm>
 
-// TODO: is vector sort elements ? nullptr nessesary at the end of vector
-
 SimCell::SimCell() :
     killCounter(0),
     respawnCounter(0),
@@ -54,6 +52,10 @@ bool SimCell::SetNumberOfNeighbors(unsigned int neigbours)
         numberOfNeighbors = neigbours;
         return true;
     }
+    else if( neigbours == 0 )
+    {
+        this->ResetNumberOfNeigbors();
+    }
     else
         return false;
 }
@@ -75,14 +77,14 @@ void SimCell::ResetNumberOfNeigbors()
 // all hosts in vector has non null pointer address
 bool SimCell::IsAllNeighborsHasAddresses()
 {
-    if ( numberOfNeighbors > 0)
-        for (auto& address : neighborsAddressesList)
-            if (address == nullptr)
+    if ( this->neighborsAddressesList.size() > 0)
+        for( auto& address : neighborsAddressesList )
+            if( address == nullptr )
                 return false;
             else
-                return true;
-    else
-        return true; // zero-size vector is interpreted as full addressed
+                continue;
+
+    return true; // zero-size vector is interpreted as full addressed
 }
 
 int SimCell::NumberOfFreeNeighborsHost()
@@ -120,8 +122,6 @@ bool SimCell::DeleteAddress(SimCell * addressToDelete)
                 {
                     size_t posToDelete = ( neighborAddressFromHisList - addressToDelete->neighborsAddressesList.begin() );
                     addressToDelete->neighborsAddressesList.erase( addressToDelete->neighborsAddressesList.begin() + posToDelete );
-
-                    // WTF WTF WTF WTF WTF WTF WTF WTF WTF WTF WTF WTF WTF
                 }
             }
             size_t posToDelete = ( addressFromList - neighborsAddressesList.begin() ); // position index of adress in container
@@ -137,197 +137,236 @@ bool SimCell::DeleteAddress(SimCell * addressToDelete)
 
 bool SimCell::SetNeigborAddress(SimCell * addressToSet)
 {
-    // start checking conditions
-    // first condition check is exist no empty address list in cell and neighbor
-    if( neighborsAddressesList.size() == 0 && addressToSet->neighborsAddressesList.size() == 0 )
+    // cant set own address to self
+    if( addressToSet != this )
     {
-        this->neighborsAddressesList.push_back(addressToSet);
-        this->numberOfNeighbors++;
-        addressToSet->neighborsAddressesList.push_back(this);
-        addressToSet->numberOfNeighbors++;
-        return true;
-    }
-
-    else if( neighborsAddressesList.size() == 0 && addressToSet->neighborsAddressesList.size() > 0 )
-    {
-        // check is neighbor has free host
-        if( !(addressToSet->IsAllNeighborsHasAddresses()) )
+        // start checking conditions
+        // first condition check is exist no empty address list in cell and neighbor
+        if( neighborsAddressesList.size() == 0 && addressToSet->neighborsAddressesList.size() == 0 )
         {
-            auto beginPos = addressToSet->neighborsAddressesList.begin();
-            auto endPos = addressToSet->neighborsAddressesList.end();
-            // check is forwarded address exist in neighbors list
-            for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
-            {
-                if( *addressFromList == this )
-                {
-                    std::cout << "Adressing error: giving address already exist in neighbor address list.\n";
-                    return false; // check only once, one neighbor - one address rule
-                }
-                else if( *addressFromList == nullptr ) // free host
-                {
-                    *addressFromList = this;
-                    (*addressFromList)->numberOfNeighbors++;
-                    break;
-                }
-                else
-                    continue; // keep looking
-            }
             this->neighborsAddressesList.push_back(addressToSet);
             this->numberOfNeighbors++;
-            return true;
-        }
-        else
-        {
             addressToSet->neighborsAddressesList.push_back(this);
             addressToSet->numberOfNeighbors++;
             return true;
         }
-    }
 
-    else if( neighborsAddressesList.size() > 0 && addressToSet->neighborsAddressesList.size() == 0 )
-    {
-        // check is forwarded address exist in cell (this) list
-        for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
+        else if( neighborsAddressesList.size() == 0 && addressToSet->neighborsAddressesList.size() > 0 )
         {
-            if ( *addressFromList == nullptr ) // free host
+            // check is neighbor has free host - nullptr in vector
+            if( !(addressToSet->IsAllNeighborsHasAddresses()) )
             {
-                *addressFromList = addressToSet;
-                break;
+                auto beginPos = addressToSet->neighborsAddressesList.begin();
+                auto endPos = addressToSet->neighborsAddressesList.end();
+                // check is forwarded address exist in neighbors list
+                for( auto addressFromList = beginPos; addressFromList != endPos; addressFromList++ )
+                {
+                    if( *addressFromList == this )
+                    {
+                        std::cout << "Adressing error: giving address already exist in neighbor address list.\n";
+                        return false; // check only once, one neighbor - one address rule
+                    }
+                    else
+                        continue; // keep looking
+                }
+
+                // and looking for free host
+                for( auto addressFromList = beginPos; addressFromList != endPos; addressFromList++ )
+                {
+                    if( *addressFromList == nullptr ) // free host
+                    {
+                        *addressFromList = this;
+                        (*addressFromList)->numberOfNeighbors++;
+                        break;
+                    }
+                    else
+                        continue; // keep looking
+                }
+                // must find because function IsAllNeighborsHasAddresses return false is find nullptr position in vector
+                this->neighborsAddressesList.push_back(addressToSet);
+                this->numberOfNeighbors++;
+                return true;
             }
             else
-                continue; // keep looking
-        }
-        addressToSet->neighborsAddressesList.push_back(this);
-        addressToSet->numberOfNeighbors++;
-        return true;
-    }
-
-    else if( neighborsAddressesList.size() > 0 && addressToSet->neighborsAddressesList.size() > 0 )
-    {
-        // check is exist free hosts in cell and neighbor lists
-        // have both free addresses
-        if ( !(this->IsAllNeighborsHasAddresses()) && !(addressToSet->IsAllNeighborsHasAddresses()) )
-        {
-            // check is forwarded address exist in cell (this) list and neighbor list
-            for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
             {
-                if ( *addressFromList == addressToSet )
+                // if not found free host in neighbor cell check is givin address exist in neighbor list, if not add and return true
+                auto beginPos = addressToSet->neighborsAddressesList.begin();
+                auto endPos = addressToSet->neighborsAddressesList.end();
+                // check is forwarded address exist in neighbors list
+                for( auto addressFromList = beginPos; addressFromList != endPos; addressFromList++ )
                 {
-                    std::cout << "Adressing error: giving address already exist in both address list.\n";
-                    return false; // check only once, one neighbor - one address rule
-                }
-                else if( *addressFromList == nullptr ) // free host
-                {
-                    // looking for free host in neighbor address list
-                    auto beginPos = addressToSet->neighborsAddressesList.begin();
-                    auto endPos = addressToSet->neighborsAddressesList.end();
-                    for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+                    if( *addressFromList == this )
                     {
-                        // addressFromList is local here, overshadows the variable
-                        if( *addressFromList == nullptr ) // free host
-                        {
-                            *addressFromList = this;
-                            (*addressFromList)->numberOfNeighbors++;
-                            break;
-                        }
-                        else
-                            continue; // keep looking, must find free host because IsAllNeighborsHasAddress return false (mean cell has free host, not full)
+                        std::cout << "Adressing error: giving address already exist in neighbor address list.\n";
+                        return false; // check only once, one neighbor - one address rule
                     }
-                    *addressFromList = addressToSet;
-                    (*addressFromList)->numberOfNeighbors++;
-                    return true;
+                    else
+                        continue; // keep looking
                 }
-                else
-                    continue; // keep looking
+                // if not found add new in this empty cell and full addressed neighbor list
+                addressToSet->neighborsAddressesList.push_back(this);
+                addressToSet->numberOfNeighbors++;
+                this->neighborsAddressesList.push_back(addressToSet);
+                this->numberOfNeighbors++;
+
+                return true;
             }
         }
 
-        // first has free (this)
-        else if ( !(this->IsAllNeighborsHasAddresses()) )
+        else if( neighborsAddressesList.size() > 0 && addressToSet->neighborsAddressesList.size() == 0 )
         {
             // check is forwarded address exist in cell (this) list
-            for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
+            for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end(); addressFromList++)
             {
-                if ( *addressFromList == addressToSet )
-                {
-                    std::cout << "Adressing error: giving address already exist in both address list.\n";
-                    return false; // check only once, one neighbor - one address rule
-                }
-                else if ( *addressFromList == nullptr ) // free host
+                if ( *addressFromList == nullptr ) // free host
                 {
                     *addressFromList = addressToSet;
-                    (*addressFromList)->numberOfNeighbors++;
                     break;
                 }
                 else
                     continue; // keep looking
+
+                // if not found nullptr position in vector add one with givin address
+                this->neighborsAddressesList.push_back(addressToSet);
+                this->numberOfNeighbors++;
             }
             addressToSet->neighborsAddressesList.push_back(this);
             addressToSet->numberOfNeighbors++;
             return true;
         }
 
-        // second has free
-        else if( !(addressToSet->IsAllNeighborsHasAddresses()) )
+        else if( neighborsAddressesList.size() > 0 && addressToSet->neighborsAddressesList.size() > 0 )
         {
-            auto beginPos = addressToSet->neighborsAddressesList.begin();
-            auto endPos = addressToSet->neighborsAddressesList.end();
-            // check is forwarded address exist in neighbors list
-            for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+            // check is exist free hosts in cell and neighbor lists
+            // have both free addresses
+            if ( !(this->IsAllNeighborsHasAddresses()) && !(addressToSet->IsAllNeighborsHasAddresses()) )
             {
-                if( *addressFromList == this )
+                // check is forwarded address exist in cell (this) list and neighbor list
+                for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
                 {
-                    std::cout << "Adressing error: giving address already exist in neighbor address list.\n";
-                    return false; // check only once, one neighbor - one address rule
-                }
-                else if( *addressFromList == nullptr ) // free host
-                {
-                    *addressFromList = this;
-                    (*addressFromList)->numberOfNeighbors++;
-                    break;
-                }
-                else
-                    continue; // keep looking
-            }
-            this->neighborsAddressesList.push_back(addressToSet);
-            this->numberOfNeighbors++;
-            return true;
-        }
-
-        // no one has free
-        else
-        {   // check is argument address exist in vector
-            for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
-            {
-                if ( *addressFromList == addressToSet )
-                {
-                    std::cout << "Adressing error: giving address already exist in both address list.\n";
-                    return false; // check only once, one neighbor - one address rule
-                }
-                else if( *addressFromList == nullptr ) // free host
-                {
-                    // looking for free host in neighbor address list
-                    auto beginPos = addressToSet->neighborsAddressesList.begin();
-                    auto endPos = addressToSet->neighborsAddressesList.end();
-                    for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+                    if ( *addressFromList == addressToSet )
                     {
-                        if( *addressFromList == nullptr ) // free host
-                        {
-                            *addressFromList = this;
-                            (*addressFromList)->numberOfNeighbors++;
-                            break;
-                        }
-                        else
-                            continue; // keep looking, must find because IsAllNeighborsHasAddress return false (mean cell has free host, not full)
+                        std::cout << "Adressing error: giving address already exist in both address list.\n";
+                        return false; // check only once, one neighbor - one address rule
                     }
-                    *addressFromList = addressToSet;
-                    (*addressFromList)->numberOfNeighbors++;
-                    return true;
+                    else if( *addressFromList == nullptr ) // free host
+                    {
+                        // looking for free host in neighbor address list
+                        auto beginPos = addressToSet->neighborsAddressesList.begin();
+                        auto endPos = addressToSet->neighborsAddressesList.end();
+                        for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+                        {
+                            // addressFromList is local here, overshadows the variable
+                            if( *addressFromList == nullptr ) // free host
+                            {
+                                *addressFromList = this;
+                                (*addressFromList)->numberOfNeighbors++;
+                                break;
+                            }
+                            else
+                                continue; // keep looking, must find free host because IsAllNeighborsHasAddress return false (mean cell has free host, not full)
+                        }
+                        *addressFromList = addressToSet;
+                        (*addressFromList)->numberOfNeighbors++;
+                        return true;
+                    }
+                    else
+                        continue; // keep looking
                 }
-                else
-                    continue; // keep looking
+            }
+
+            // first has free (this)
+            else if ( !(this->IsAllNeighborsHasAddresses()) )
+            {
+                // check is forwarded address exist in cell (this) list
+                for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
+                {
+                    if ( *addressFromList == addressToSet )
+                    {
+                        std::cout << "Adressing error: giving address already exist in both address list.\n";
+                        return false; // check only once, one neighbor - one address rule
+                    }
+                    else if ( *addressFromList == nullptr ) // free host
+                    {
+                        *addressFromList = addressToSet;
+                        (*addressFromList)->numberOfNeighbors++;
+                        break;
+                    }
+                    else
+                        continue; // keep looking
+                }
+                addressToSet->neighborsAddressesList.push_back(this);
+                addressToSet->numberOfNeighbors++;
+                return true;
+            }
+
+            // second has free
+            else if( !(addressToSet->IsAllNeighborsHasAddresses()) )
+            {
+                auto beginPos = addressToSet->neighborsAddressesList.begin();
+                auto endPos = addressToSet->neighborsAddressesList.end();
+                // check is forwarded address exist in neighbors list
+                for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+                {
+                    if( *addressFromList == this )
+                    {
+                        std::cout << "Adressing error: giving address already exist in neighbor address list.\n";
+                        return false; // check only once, one neighbor - one address rule
+                    }
+                    else if( *addressFromList == nullptr ) // free host
+                    {
+                        *addressFromList = this;
+                        (*addressFromList)->numberOfNeighbors++;
+                        break;
+                    }
+                    else
+                        continue; // keep looking
+                }
+                this->neighborsAddressesList.push_back(addressToSet);
+                this->numberOfNeighbors++;
+                return true;
+            }
+
+            // no one has free
+            else
+            {   // check is argument address exist in vector
+                for (auto addressFromList = neighborsAddressesList.begin(); addressFromList != neighborsAddressesList.end() ;addressFromList++)
+                {
+                    if ( *addressFromList == addressToSet )
+                    {
+                        std::cout << "Adressing error: giving address already exist in both address list.\n";
+                        return false; // check only once, one neighbor - one address rule
+                    }
+                    else if( *addressFromList == nullptr ) // free host
+                    {
+                        // looking for free host in neighbor address list
+                        auto beginPos = addressToSet->neighborsAddressesList.begin();
+                        auto endPos = addressToSet->neighborsAddressesList.end();
+                        for( auto addressFromList = beginPos; addressFromList != endPos ;addressFromList++ )
+                        {
+                            if( *addressFromList == nullptr ) // free host
+                            {
+                                *addressFromList = this;
+                                (*addressFromList)->numberOfNeighbors++;
+                                break;
+                            }
+                            else
+                                continue; // keep looking, must find because IsAllNeighborsHasAddress return false (mean cell has free host, not full)
+                        }
+                        *addressFromList = addressToSet;
+                        (*addressFromList)->numberOfNeighbors++;
+                        return true;
+                    }
+                    else
+                        continue; // keep looking
+                }
             }
         }
+    }
+    else
+    {
+        std::cout << "Addressing error: Cannot set own address to self\n";
+        return false;
     }
 }
 
