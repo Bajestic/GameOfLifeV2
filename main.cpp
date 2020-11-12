@@ -1,12 +1,14 @@
 #include <iostream>
 #include "SimCell_v2.h"
+#include "UniverseCell.h"
 #include <vector>
 #include <cstdlib>
-#include <ctime>
+#include <chrono>
+#include <thread>
 
 // TODO: Even more tests
 // TODO: Makefile !!!
-// TODO: Connect algorithm ( at the beginning make connections on a square plane - in dependency sense, not graphical )
+// TODO: Connect algorithm ( for now is only on square plan )
 // TODO: Rules implementation
 // TODO: Command line support
 // TODO: Ctor's ( for now only default )
@@ -15,55 +17,60 @@
 
 int main()
 {
-    srand(time(0));
-    std::string buff;                       // to name cell with index
-    int i{};                                // index - int to string
-    std::vector<SimCell> cellGroup(5);      // array of 5 cells
+    std::cout << "\t! ! ! WELCOME IN GAME OF LIFE ! ! !\n";
+    auto connectedCells = MakeSquareUniverse(40);
+    std::cout << std::endl;
 
-    std::cout << "\n\t\tDIAGNOSTIC CODE BLOCK\n\n";
+    connectedCells[672].SetState(true);
+    connectedCells[673].SetState(true);
+    connectedCells[674].SetState(true);
+    connectedCells[702].SetState(true);
+    connectedCells[733].SetState(true);
 
-    // Set label with index in cells to easly recognize
-    for( auto& cell : cellGroup )
+    int nr = 1;
+
+    connectedCells[672 + nr].SetState(true);
+    connectedCells[673 + nr].SetState(true);
+    connectedCells[674 + nr].SetState(true);
+    connectedCells[702 + nr].SetState(true);
+    connectedCells[733 + nr].SetState(true);
+
+    nr = 4;
+
+    connectedCells[672 + nr].SetState(true);
+    connectedCells[673 + nr].SetState(true);
+    connectedCells[674 + nr].SetState(true);
+    connectedCells[702 + nr].SetState(true);
+    connectedCells[733 + nr].SetState(true);
+
+    int row = 0;
+
+//    connectedCells[150 + row].SetState(true);
+//    connectedCells[151 + row].SetState(true);
+//    connectedCells[152 + row].SetState(true);
+//    connectedCells[122 + row].SetState(true);
+//    connectedCells[91 + row].SetState(true);
+
+//    connectedCells[0].SeeRules();
+
+    while( true )
     {
-        buff = "Cell nr: " + std::to_string(i);
-        cell.SetLabel(buff);
-        i++;
-        std::cout << buff << "\tCell address: " << cell.GetCellAddress() << '\n';
+        system("clear");
+        DisplaySquareUniverse(connectedCells, 40);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(125));
+
+        for( auto& cell : connectedCells )
+            cell.MakeAnalize();
+        for( auto& cell : connectedCells )
+            cell.MakeUpdate();
+            //break;
     }
+
+
+    // DisplaySquareUniverse(connectedCells, 30);
 
     std::cout << std::endl;
-    std::cout << "------------- SET RANDOM NUMBER OF NEIGHBORS  ----------------\n";
-    std::cout << "----------- SET RANDOM ADDRESS (CELL) TO OTHER  --------------\n";
-    std::cout << "------------- HISTORY OF CHANGES STEP BY STEP  ---------------\n";
-
-    int counter = 1;
-    int randomNeighbors{};
-
-    // random addressing and setting number of neighbors
-    for( auto& cell : cellGroup )
-    {
-        std::cout << '\n' << counter << ". STEP\n";
-        cell.ShowLabel();
-        randomNeighbors = rand() % 4;
-        std::cout << "\nChange number of neighbors to: " << randomNeighbors;
-        cell.SetNumberOfNeighbors(randomNeighbors);
-        int index = rand() % 5;
-        std::cout << std::endl;
-        cell.ShowLabel();
-        std::cout << " connect with ";
-        cellGroup[index].ShowLabel();
-        std::cout << '\n';
-        cell.SetNeigborAddress(&cellGroup[index]);
-
-        // after changes show diffrence
-        for( auto& cell : cellGroup )
-        {
-            cell.ShowLabel();
-            std::cout << std::endl;
-            cell.ShowNeighbors();
-        }
-        counter++;
-    }
 
     return 0;
 }

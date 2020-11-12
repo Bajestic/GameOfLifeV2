@@ -34,6 +34,7 @@
 		</Compiler>
 		<Unit filename="SimCell_v2.cpp" />
 		<Unit filename="SimCell_v2.h" />
+		<Unit filename="UniverseCell.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

@@ -11,7 +11,7 @@ public:
     const SimCell * GetCellAddress() const;
     bool SetNumberOfNeighbors(unsigned int);
     void ResetNumberOfNeigbors(); // to zero - zero-vector too
-    bool IsAllNeighborsHasAddresses();
+    bool IsFullAddressList();
     int NumberOfFreeNeighborsHost();
     bool DeleteAddress(SimCell *);
     void ShowNeighbors() const;
@@ -20,12 +20,20 @@ public:
     void SetLabel(std::string);
     int GetNumberOfNeighbors();
     bool SetNeigborAddress(SimCell *);
+    bool IsAllNeighborsAreDead();
     void SetState(bool);
+    void ShowState() const;
     std::vector<SimCell *> ShowNeighborsAddresses() const;
+    void SetRules(unsigned int numberOfNeighborsToKeepLife, unsigned int numberToRespawnDeadCell );
+    void SeeRules();
+    void MakeAnalize();
+    void MakeUpdate();
 protected:
 private:
     unsigned int killCounter;
     unsigned int respawnCounter;
+    std::vector<unsigned int> killRules;
+    std::vector<unsigned int> respawnRules;
     unsigned int numberOfNeighbors;
     bool cellStatus;
     bool nextStepCellStatus;
