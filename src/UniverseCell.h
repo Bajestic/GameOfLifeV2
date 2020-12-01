@@ -219,7 +219,13 @@ int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
         case 'e':
         {
             for( auto& cell : universe )
+            {
                 cell.SetState(false);
+                cell.ShowSelect(false);
+            }
+            indexSelect = 0;
+
+            break;
         }
     }
 
