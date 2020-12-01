@@ -2,6 +2,7 @@
 #include <typeinfo>
 #include <iostream>
 #include <algorithm>
+#include <ncurses.h>
 
 SimCell::SimCell() :
     killCounter(0),
@@ -9,6 +10,7 @@ SimCell::SimCell() :
     numberOfNeighbors(0),
     killRules(1, 3),
     respawnRules(1, 3),
+    showSelect(false),
     nextStepCellStatus(false),
     cellStatus(false),
     cellAddress(this),
@@ -417,10 +419,28 @@ void SimCell::ShowLabel() const
 
 void SimCell::ShowState() const
 {
-    if( this->cellStatus )
-        std::cout << 'O'; // life
+    if( showSelect )
+    {
+        attron(A_REVERSE);
+        attron(A_BLINK);
+        if( this->cellStatus )
+            addch('O'); // life
+            //std::cout << 'O';
+        else
+            addch('_'); // death
+            //std::cout << '_';
+        attroff(A_REVERSE);
+        attroff(A_BLINK);
+    }
     else
-        std::cout << '_'; // death
+    {
+        if( this->cellStatus )
+            addch('O'); // life
+            //std::cout << 'O';
+        else
+            addch('_');
+            //std::cout << '_'; // death
+    }
 }
 
 void SimCell::SetLabel(const char * cellLabel)
