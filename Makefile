@@ -1,4 +1,5 @@
 # Makefile
+CXX := g++
 
 main:	clean out
 	g++ -o out src/main.cpp *.o -lncurses
