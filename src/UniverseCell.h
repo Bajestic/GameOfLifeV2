@@ -4,6 +4,7 @@
 #include "SimCell_v2.h"
 #include <curses.h>
 
+// to find remember vector index in select mode
 unsigned int indexSelect = 0;
 
 // This module implements connect algorithms between cells and mutual relation
@@ -15,15 +16,13 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
     std::vector<SimCell> SquareUniverse(area);
 
     std::string buff;                       // to name cell with index
-    unsigned int i{};                                // index - int to string
+    unsigned int i{};                       // index - int to string
 
     for( auto& cell : SquareUniverse )
     {
         buff = "Cell nr: " + std::to_string(i);
         cell.SetLabel(buff);
         i++;
-        //std::cout << buff << "\tCell address: " << cell.GetCellAddress() << '\n';
-        //std::cout << "State: ";
         cell.SetNumberOfNeighbors(1);
         cell.SetRules( keepLifeRules, respawnRules );
     }
@@ -63,39 +62,25 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
             continue;
     }
 
-    // Display connections state
-//    for (auto& cell : SquareUniverse)
-//    {
-//        cell.ShowLabel();
-//        std::cout << std::endl;
-//        cell.ShowNeighbors();
-//    };
-
     return SquareUniverse;
 }
 
 void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize )
 {
     int nextLineCounter = 0;
-    //addch('\t');
-    //std::cout << '\t';
     for ( auto& cell : squareUniverse )
     {
         if( !(nextLineCounter % universeSize == 0) )
         {
             cell.ShowState();
             addch(' ');
-            //std::cout << ' ';
             nextLineCounter++;
         }
         else
         {
-            //std::cout << "\n\t\r";
-            //addstr("\r\n\t");
             addstr("\n\t");
             cell.ShowState();
             addch(' ');
-            //std::cout << ' ';
             nextLineCounter++;
         }
     };
@@ -103,7 +88,6 @@ void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSiz
 
 int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, unsigned int indexSelect, int key )
 {
-    //unsigned int indexSelect = 0;
     switch( key )
     {
         case KEY_LEFT:
