@@ -74,7 +74,7 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
     return SquareUniverse;
 }
 
-void DisplaySquareUniverse(std::vector<SimCell> squareUniverse, int universeSize )
+void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize )
 {
     int nextLineCounter = 0;
     //addch('\t');
