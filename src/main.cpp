@@ -7,6 +7,7 @@
 #include <thread>
 #include <curses.h>
 
+extern unsigned int indexSelect;
 // TODO: Even more tests
 // TODO: Makefile !!!
 // TODO: Connect algorithm ( for now is only on square plan )
@@ -18,7 +19,10 @@
 
 int main()
 {
-    auto connectedCells = MakeSquareUniverse(35);
+    unsigned int sizeUniverse = 150;
+    unsigned int keepLifeRules = 23;
+    unsigned int respawnRules = 3;
+    auto connectedCells = MakeSquareUniverse(sizeUniverse, keepLifeRules, respawnRules);
 
     WINDOW * win = initscr();   // initialize screen
     nodelay(win,true);          // no waiting for enter button
@@ -26,7 +30,7 @@ int main()
     keypad(win,true);           // enable kaypad with macros
     refresh();
 
-    unsigned int indexSelect = 0;
+    //unsigned int indexSelect = 0;
     int keyPress{};
 
     while( keyPress != 'q' )
@@ -43,9 +47,9 @@ int main()
             case 'e':
             {
                 clear();
-                indexSelect = NavigateUniverse(connectedCells,35,keyPress);
-                DisplaySquareUniverse(connectedCells, 35);
-                std::this_thread::sleep_for(std::chrono::milliseconds(30));
+                indexSelect = NavigateUniverse(connectedCells,sizeUniverse, indexSelect, keyPress);
+                DisplaySquareUniverse(connectedCells, sizeUniverse);
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
                 break;
             }
@@ -57,7 +61,7 @@ int main()
                 while( keyPress = getch() != ' ' )
                 {
                     clear();
-                    DisplaySquareUniverse(connectedCells, 35);
+                    DisplaySquareUniverse(connectedCells, sizeUniverse);
                     std::this_thread::sleep_for(std::chrono::milliseconds(125));
 
                     for( auto& cell : connectedCells )
@@ -65,13 +69,31 @@ int main()
                     for( auto& cell : connectedCells )
                         cell.MakeUpdate();
                 }
+                break;
+            }
+            case 'r':
+            {
+                clear();
+                nodelay(win, false);
+                echo();
+                printw("CHANGE RULES:\n");
+                printw("Keep life rule: ");
+                scanw("%u",&keepLifeRules);
+                printw("Respawn rule: ");
+                scanw("%u",&respawnRules);
+                for( auto& cell : connectedCells )
+                    cell.SetRules(keepLifeRules,respawnRules);
+                noecho();
+                nodelay(win, true);
             }
             default:
             {
                 connectedCells[indexSelect].ShowSelect(true);
                 clear();
-                DisplaySquareUniverse(connectedCells, 35);
+                DisplaySquareUniverse(connectedCells, sizeUniverse);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+                break;
             }
         }
     }
