@@ -86,6 +86,27 @@ int main()
                 noecho();
                 nodelay(win, true);
             }
+            case 'u':
+            {
+                clear();
+                unsigned int temp{};
+                nodelay(win, false);
+                echo();
+                printw("CHANGE UNIVERSE SIZE:\n");
+                printw("dimension: ");
+                scanw("%u",&temp);
+                while( !(temp >= 10 && temp <= 150) )
+                {
+                    printw("give dimension from 10 to 150: ");
+                    scanw("%u",&temp);
+                }
+                sizeUniverse = temp;
+                connectedCells = MakeSquareUniverse(sizeUniverse);
+                clear();
+                indexSelect = 0;
+                noecho();
+                nodelay(win, true);
+            }
             default:
             {
                 connectedCells[indexSelect].ShowSelect(true);
