@@ -4,8 +4,9 @@
 #include "SimCell_v2.h"
 #include <curses.h>
 
-// This module implements connect algorithms between cells and mutual relation
+unsigned int indexSelect = 0;
 
+// This module implements connect algorithms between cells and mutual relation
 // On a square plan, width and lengh, Conway default rules
 // Return one vector
 std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRules = 23, unsigned int respawnRules = 3 )
@@ -24,7 +25,7 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
         //std::cout << buff << "\tCell address: " << cell.GetCellAddress() << '\n';
         //std::cout << "State: ";
         cell.SetNumberOfNeighbors(1);
-        cell.SetRules( 23,3 );
+        cell.SetRules( keepLifeRules, respawnRules );
     }
 
     unsigned int limit = a*a - 1;
@@ -100,23 +101,13 @@ void DisplaySquareUniverse(std::vector<SimCell> squareUniverse, int universeSize
     };
 }
 
-int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
+int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, unsigned int indexSelect, int key )
 {
-    unsigned int indexSelect = 0;
+    //unsigned int indexSelect = 0;
     switch( key )
     {
         case KEY_LEFT:
         {
-            for( auto& cell : universe )
-            {
-                if( cell.ShowSelect() )
-                    break;
-                else
-                {
-                    indexSelect++;
-                    continue;
-                }
-            }
             if( universe[0].ShowSelect() )
                 break;
             else
@@ -131,16 +122,6 @@ int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
 
         case KEY_RIGHT:
         {
-            for( auto& cell : universe )
-            {
-                if( cell.ShowSelect() )
-                    break;
-                else
-                {
-                    indexSelect++;
-                    continue;
-                }
-            }
             if( universe[universe.size() - 1].ShowSelect() )
                 break;
             else
@@ -155,16 +136,6 @@ int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
 
         case KEY_DOWN:
         {
-            for( auto& cell : universe )
-            {
-                if( cell.ShowSelect() )
-                    break;
-                else
-                {
-                    indexSelect++;
-                    continue;
-                }
-            }
             if( universe[ ( universe.size() ) - a + ( indexSelect % a ) ].ShowSelect() )
                 break;
             else
@@ -179,16 +150,6 @@ int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
 
         case KEY_UP:
         {
-            for( auto& cell : universe )
-            {
-                if( cell.ShowSelect() )
-                    break;
-                else
-                {
-                    indexSelect++;
-                    continue;
-                }
-            }
             if( universe[ indexSelect % a ].ShowSelect() )
                 break;
             else
@@ -203,14 +164,6 @@ int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, int key )
 
         case '\n':
         {
-            for( auto& cell : universe )
-                if( cell.ShowSelect() )
-                    break;
-                else
-                {
-                    indexSelect++;
-                    continue;
-                }
             universe[indexSelect].SetState( !universe[indexSelect].CellState() );
 
             break;
