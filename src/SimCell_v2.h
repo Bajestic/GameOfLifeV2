@@ -41,7 +41,6 @@ private:
     bool cellStatus;
     bool nextStepCellStatus;
     bool showSelect;
-    //unsigned int indexSelect;
     SimCell * cellAddress;
     std::vector<SimCell *> neighborsAddressesList;
     std::string label;
