@@ -419,16 +419,16 @@ void SimCell::ShowLabel() const
 
 void SimCell::ShowState() const
 {
+
     if( showSelect )
-    {
+    {	
+	// in select mode 
         attron(A_REVERSE);
         attron(A_BLINK);
         if( this->cellStatus )
             addch('O'); // life
-            //std::cout << 'O';
         else
             addch('_'); // death
-            //std::cout << '_';
         attroff(A_REVERSE);
         attroff(A_BLINK);
     }
@@ -436,10 +436,8 @@ void SimCell::ShowState() const
     {
         if( this->cellStatus )
             addch('O'); // life
-            //std::cout << 'O';
         else
-            addch('_');
-            //std::cout << '_'; // death
+            addch('_'); // death
     }
 }
 
@@ -455,6 +453,7 @@ void SimCell::SetLabel(std::string cellLabel)
 
 void SimCell::SetRules(unsigned int kill, unsigned int resp)
 {
+
     killRules.clear();
     respawnRules.clear();
 
@@ -501,8 +500,6 @@ void SimCell::MakeAnalize()
 {
     if( neighborsAddressesList.size() == 0 )
         std::cout << "Analize error: neighbor address list is empty\n";
-    // optimization - if all neighbors are dead continous analizing is break
-    // else if( IsAllNeighborsAreDead() );
     else
         if( cellStatus ) // if this cell life
         {
