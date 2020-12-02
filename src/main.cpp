@@ -6,15 +6,12 @@
 #include <chrono>
 #include <thread>
 #include <curses.h>
+#include <algorithm>
 
 extern unsigned int indexSelect;
 // TODO: Even more tests
-// TODO: Makefile !!!
 // TODO: Connect algorithm ( for now is only on square plan )
-// TODO: Rules implementation
-// TODO: Command line support
 // TODO: Ctor's ( for now only default )
-// TODO: Graphical representation of connections between cells
 // TODO: Exceptions...diagnostic communictes etc.
 
 int main()
@@ -73,6 +70,7 @@ int main()
             }
             case 'r':
             {
+                unsigned int temp{};
                 clear();
                 nodelay(win, false);
                 echo();
@@ -85,6 +83,8 @@ int main()
                     cell.SetRules(keepLifeRules,respawnRules);
                 noecho();
                 nodelay(win, true);
+
+                break;
             }
             case 'u':
             {
@@ -106,6 +106,8 @@ int main()
                 indexSelect = 0;
                 noecho();
                 nodelay(win, true);
+
+                break;
             }
             default:
             {
