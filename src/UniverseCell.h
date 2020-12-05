@@ -3,6 +3,7 @@
 
 #include "SimCell_v2.h"
 #include <curses.h>
+#include <iostream>
 
 // to find remember vector index in select mode
 unsigned int indexSelect = 0;
@@ -85,6 +86,29 @@ void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSiz
         }
     };
 }
+
+void DisplaySquareUniverseNoNcurses(std::vector<SimCell> squareUniverse, int universeSize )
+{
+    int nextLineCounter = 0;
+    std::cout << '\t';
+    for ( auto& cell : squareUniverse )
+    {
+        if( !(nextLineCounter % universeSize == 0) )
+        {
+            cell.ShowStateNoNcurses();
+            std::cout << ' ';
+            nextLineCounter++;
+        }
+        else
+        {
+            std::cout << "\n\t";
+            cell.ShowStateNoNcurses();
+            std::cout << ' ';
+            nextLineCounter++;
+        }
+    };
+}
+
 
 int NavigateUniverse(std::vector<SimCell>& universe, unsigned int a, unsigned int indexSelect, int key )
 {

@@ -441,6 +441,14 @@ void SimCell::ShowState() const
     }
 }
 
+void SimCell::ShowStateNoNcurses() const
+{
+    if( this->cellStatus )
+        std::cout << 'O'; // life
+    else
+        std::cout << '_'; // death
+}
+
 void SimCell::SetLabel(const char * cellLabel)
 {
     label = cellLabel;

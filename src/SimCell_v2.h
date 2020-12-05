@@ -23,6 +23,7 @@ public:
     bool IsAllNeighborsAreDead();
     void SetState(bool);
     void ShowState() const;
+    void ShowStateNoNcurses() const;
     void ShowStateSelect() const;
     void ShowSelect(bool show) { showSelect = show; }
     bool ShowSelect() { return showSelect; }
