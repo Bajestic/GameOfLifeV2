@@ -8,8 +8,6 @@
 #include <curses.h>
 #include <algorithm>
 
-bool button = true;
-
 extern unsigned int indexSelect;
 // TODO: Even more tests
 // TODO: Connect algorithm ( for now is only on square plan )
@@ -21,59 +19,7 @@ int main(int argc, char *argv[])
 	unsigned int keepLifeRules = 23;
 	unsigned int respawnRules = 3;
 
-	if (argc > 1)
-	{
-		std::cout << "\t! ! ! WELCOME IN GAME OF LIFE ! ! !\n";
-		auto connectedCells = MakeSquareUniverse(40, keepLifeRules, respawnRules);
-		std::cout << std::endl;
-
-		connectedCells[672].SetState(true);
-		connectedCells[673].SetState(true);
-		connectedCells[674].SetState(true);
-		connectedCells[702].SetState(true);
-		connectedCells[733].SetState(true);
-
-		int nr = 1;
-
-		connectedCells[672 + nr].SetState(true);
-		connectedCells[673 + nr].SetState(true);
-		connectedCells[674 + nr].SetState(true);
-		connectedCells[702 + nr].SetState(true);
-		connectedCells[733 + nr].SetState(true);
-
-		nr = 4;
-
-		connectedCells[672 + nr].SetState(true);
-		connectedCells[673 + nr].SetState(true);
-		connectedCells[674 + nr].SetState(true);
-		connectedCells[702 + nr].SetState(true);
-		connectedCells[733 + nr].SetState(true);
-
-		int row = 0;
-
-		//    connectedCells[150 + row].SetState(true);
-		//    connectedCells[151 + row].SetState(true);
-		//    connectedCells[152 + row].SetState(true);
-		//    connectedCells[122 + row].SetState(true);
-		//    connectedCells[91 + row].SetState(true);
-
-		//    connectedCells[0].SeeRules();
-
-		while( true )
-		{
-			system("clear");
-			DisplaySquareUniverseNoNcurses(connectedCells, 40);
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(125));
-
-			for( auto& cell : connectedCells )
-				cell.MakeAnalize();
-			for( auto& cell : connectedCells )
-				cell.MakeUpdate();
-			//break;
-		}
-	}
-	else
+	if (argc == 1)
 	{
 		unsigned int sizeUniverse = 150;
 		auto connectedCells = MakeSquareUniverse(sizeUniverse, keepLifeRules, respawnRules);
@@ -181,5 +127,62 @@ int main(int argc, char *argv[])
 		refresh();
 		endwin();
 	}
+	else if (argc == 2 && std::string(argv[1]) == "-auto")
+	{
+		std::cout << "\t! ! ! WELCOME IN GAME OF LIFE ! ! !\n";
+		auto connectedCells = MakeSquareUniverse(40, keepLifeRules, respawnRules);
+		std::cout << std::endl;
+
+		connectedCells[672].SetState(true);
+		connectedCells[673].SetState(true);
+		connectedCells[674].SetState(true);
+		connectedCells[702].SetState(true);
+		connectedCells[733].SetState(true);
+
+		int nr = 1;
+
+		connectedCells[672 + nr].SetState(true);
+		connectedCells[673 + nr].SetState(true);
+		connectedCells[674 + nr].SetState(true);
+		connectedCells[702 + nr].SetState(true);
+		connectedCells[733 + nr].SetState(true);
+
+		nr = 4;
+
+		connectedCells[672 + nr].SetState(true);
+		connectedCells[673 + nr].SetState(true);
+		connectedCells[674 + nr].SetState(true);
+		connectedCells[702 + nr].SetState(true);
+		connectedCells[733 + nr].SetState(true);
+
+		int row = 0;
+
+		//    connectedCells[150 + row].SetState(true);
+		//    connectedCells[151 + row].SetState(true);
+		//    connectedCells[152 + row].SetState(true);
+		//    connectedCells[122 + row].SetState(true);
+		//    connectedCells[91 + row].SetState(true);
+
+		//    connectedCells[0].SeeRules();
+
+		while( true )
+		{
+			system("clear");
+			DisplaySquareUniverseNoNcurses(connectedCells, 40);
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(125));
+
+			for( auto& cell : connectedCells )
+				cell.MakeAnalize();
+			for( auto& cell : connectedCells )
+				cell.MakeUpdate();
+			//break;
+		}
+	}
+	else
+	{
+		std::cout << "Command line argument not recognized!\n";
+	}
+
 	return 0;
 }
