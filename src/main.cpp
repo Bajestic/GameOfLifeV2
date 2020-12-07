@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 			{
 				clear();
 				indexSelect = NavigateUniverse(connectedCells,sizeUniverse, indexSelect, keyPress);
-				DisplaySquareUniverse(connectedCells, sizeUniverse);
+				DisplaySquareUniverse<isNcurses::ON_NCURSES>(connectedCells, sizeUniverse);
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
 				break;
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 				while( keyPress = getch() != ' ' )
 				{
 					clear();
-					DisplaySquareUniverse(connectedCells, sizeUniverse);
+					DisplaySquareUniverse<isNcurses::ON_NCURSES>(connectedCells, sizeUniverse);
 					std::this_thread::sleep_for(std::chrono::milliseconds(125));
 
 					for( auto& cell : connectedCells )
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 			{
 				connectedCells[indexSelect].ShowSelect(true);
 				clear();
-				DisplaySquareUniverse(connectedCells, sizeUniverse);
+				DisplaySquareUniverse<isNcurses::ON_NCURSES>(connectedCells, sizeUniverse);
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 				break;
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 		while( true )
 		{
 			system("clear");
-			DisplaySquareUniverseNoNcurses(connectedCells, 40);
+			DisplaySquareUniverse<isNcurses::OFF_NCURSES>(connectedCells, 40);
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(125));
 

@@ -66,7 +66,11 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
     return SquareUniverse;
 }
 
-void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize )
+template <isNcurses ncursesState>
+void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize );
+
+template <>
+void DisplaySquareUniverse<isNcurses::ON_NCURSES>(std::vector<SimCell> &squareUniverse, int universeSize )
 {
     int nextLineCounter = 0;
     for ( auto& cell : squareUniverse )
@@ -84,10 +88,11 @@ void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSiz
             addch(' ');
             nextLineCounter++;
         }
-    };
+    }
 }
 
-void DisplaySquareUniverseNoNcurses(std::vector<SimCell> squareUniverse, int universeSize )
+template <>
+void DisplaySquareUniverse<isNcurses::OFF_NCURSES>(std::vector<SimCell> &squareUniverse, int universeSize )
 {
     int nextLineCounter = 0;
     std::cout << '\t';
@@ -106,7 +111,7 @@ void DisplaySquareUniverseNoNcurses(std::vector<SimCell> squareUniverse, int uni
             std::cout << ' ';
             nextLineCounter++;
         }
-    };
+    }
 }
 
 
