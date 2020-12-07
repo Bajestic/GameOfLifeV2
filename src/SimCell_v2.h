@@ -48,4 +48,10 @@ private:
     void AddOneFreeAddressMore();
 };
 
+enum class isNcurses
+{
+	ON_NCURSES,
+	OFF_NCURSES
+};
+
 #endif // SIMCELL_V2_H
