@@ -77,14 +77,14 @@ void DisplaySquareUniverse<isNcurses::ON_NCURSES>(std::vector<SimCell> &squareUn
     {
         if( !(nextLineCounter % universeSize == 0) )
         {
-            cell.ShowState();
+            cell.ShowState<isNcurses::ON_NCURSES>();
             addch(' ');
             nextLineCounter++;
         }
         else
         {
             addstr("\n\t");
-            cell.ShowState();
+            cell.ShowState<isNcurses::ON_NCURSES>();
             addch(' ');
             nextLineCounter++;
         }
@@ -100,14 +100,14 @@ void DisplaySquareUniverse<isNcurses::OFF_NCURSES>(std::vector<SimCell> &squareU
     {
         if( !(nextLineCounter % universeSize == 0) )
         {
-            cell.ShowStateNoNcurses();
+            cell.ShowState<isNcurses::OFF_NCURSES>();
             std::cout << ' ';
             nextLineCounter++;
         }
         else
         {
             std::cout << "\n\t";
-            cell.ShowStateNoNcurses();
+            cell.ShowState<isNcurses::OFF_NCURSES>();
             std::cout << ' ';
             nextLineCounter++;
         }
