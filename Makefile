@@ -1,6 +1,6 @@
 # Makefile
 CXX := g++
-CXXFLAGS := -std=c++11
+CXXFLAGS := -std=c++17
 
 main:	clean out cleangch
 	$(CXX) $(CXXFLAGS) -o out src/main.cpp *.o -lncurses

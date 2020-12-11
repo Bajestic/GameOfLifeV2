@@ -417,7 +417,8 @@ void SimCell::ShowLabel() const
     std::cout << label;
 }
 
-void SimCell::ShowState() const
+template <>
+void SimCell::ShowState<isNcurses::ON_NCURSES>() const
 {
 
     if( showSelect )
@@ -441,7 +442,9 @@ void SimCell::ShowState() const
     }
 }
 
-void SimCell::ShowStateNoNcurses() const
+
+template <>
+void SimCell::ShowState<isNcurses::OFF_NCURSES>() const
 {
     if( this->cellStatus )
         std::cout << 'O'; // life

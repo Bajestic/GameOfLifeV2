@@ -66,49 +66,49 @@ std::vector<SimCell> MakeSquareUniverse(unsigned int a, unsigned int keepLifeRul
     return SquareUniverse;
 }
 
+
 template <isNcurses ncursesState>
-void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize );
-
-template <>
-void DisplaySquareUniverse<isNcurses::ON_NCURSES>(std::vector<SimCell> &squareUniverse, int universeSize )
+void DisplaySquareUniverse(std::vector<SimCell> &squareUniverse, int universeSize )
 {
-    int nextLineCounter = 0;
+	int nextLineCounter = 0;
+	if constexpr (ncursesState == isNcurses::OFF_NCURSES)
+	{
+		std::cout << '\t';
+	}
     for ( auto& cell : squareUniverse )
     {
         if( !(nextLineCounter % universeSize == 0) )
         {
-            cell.ShowState();
-            addch(' ');
+            cell.ShowState<ncursesState>();
+        	if constexpr (ncursesState == isNcurses::OFF_NCURSES)
+			{
+                std::cout << ' ';
+			}
+        	else
+        	{
+        		addch(' ');
+        	}
             nextLineCounter++;
         }
         else
         {
-            addstr("\n\t");
-            cell.ShowState();
-            addch(' ');
-            nextLineCounter++;
-        }
-    }
-}
-
-template <>
-void DisplaySquareUniverse<isNcurses::OFF_NCURSES>(std::vector<SimCell> &squareUniverse, int universeSize )
-{
-    int nextLineCounter = 0;
-    std::cout << '\t';
-    for ( auto& cell : squareUniverse )
-    {
-        if( !(nextLineCounter % universeSize == 0) )
-        {
-            cell.ShowStateNoNcurses();
-            std::cout << ' ';
-            nextLineCounter++;
-        }
-        else
-        {
-            std::cout << "\n\t";
-            cell.ShowStateNoNcurses();
-            std::cout << ' ';
+        	if constexpr (ncursesState == isNcurses::OFF_NCURSES)
+			{
+        		std::cout << "\n\t";
+			}
+        	else
+        	{
+        		addstr("\n\t");
+        	}
+            cell.ShowState<ncursesState>();
+        	if constexpr (ncursesState == isNcurses::OFF_NCURSES)
+			{
+        		std::cout << ' ';
+			}
+        	else
+        	{
+        		addch(' ');
+        	}
             nextLineCounter++;
         }
     }

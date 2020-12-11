@@ -3,6 +3,14 @@
 #include <vector>
 #include <string>
 
+
+enum class isNcurses
+{
+	ON_NCURSES,
+	OFF_NCURSES
+};
+
+
 class SimCell
 {
 public:
@@ -22,8 +30,10 @@ public:
     bool SetNeigborAddress(SimCell *);
     bool IsAllNeighborsAreDead();
     void SetState(bool);
+
+    template <isNcurses ncursesState>
     void ShowState() const;
-    void ShowStateNoNcurses() const;
+
     void ShowStateSelect() const;
     void ShowSelect(bool show) { showSelect = show; }
     bool ShowSelect() { return showSelect; }
@@ -48,10 +58,5 @@ private:
     void AddOneFreeAddressMore();
 };
 
-enum class isNcurses
-{
-	ON_NCURSES,
-	OFF_NCURSES
-};
 
 #endif // SIMCELL_V2_H
