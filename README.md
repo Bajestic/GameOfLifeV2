@@ -20,10 +20,10 @@ And next
 ```
 
 # Navigate
-Arrow Keys - Move around the universe  
-Enter Key - Change cell to Life \ Death status  
-Space Key - Start \ Stop simulation  
-'u' Key - Change size of universe from 10 to 150 (Will Clear universe)  
-'r' Key - Change rules of Game Of Life (Conway's rules are default)  
-'e' Key - Clear universe  
+Arrow Keys - Move around the universe\
+Enter Key - Change cell to Life \ Death status\
+Space Key - Start \ Stop simulation\
+'u' Key - Change size of universe from 10 to 150 (Will Clear universe)\
+'r' Key - Change rules of Game Of Life (Conway's rules are default)\
+'e' Key - Clear universe\
 Ctrl + 'c' - Exit
