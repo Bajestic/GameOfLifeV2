@@ -5,12 +5,13 @@ The Game of Life is a cellular automaton devised by the British mathematician Jo
 To use keypad for navigate is required lncurses library
 
 # Install lncurses library for enable keypad to navigate
+Go to terminal and run command below
 ```bash
 sudo apt-get install libncurses5-dev libncursesw5-dev
 ```
 
 # Usage
-For build and run use Make command
+For build and run go to app folder and use Make command in terminal.
 ```bash
 ./make
 ```
